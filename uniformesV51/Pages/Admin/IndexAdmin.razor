@@ -1,0 +1,29 @@
+﻿@page "/admin"
+
+@inherits IndexAdminBase
+@inject NotificationService NS
+@using uniformesV51.Model
+
+    <CascadingValue Value="ElUser" Name="ElUserAll">
+        <CascadingValue Value="BitacoraAll" Name="BitacoraAll">
+            <RadzenTabs @bind-SelectedIndex=@SelectedIndex>
+            <Tabs>
+                <RadzenTabsItem Text="Inicio" Icon="refresh">
+                    Algo
+                </RadzenTabsItem>
+                <RadzenTabsItem Text="Organizaciones" Icon="refresh">
+                    <Org LeerOrgsC="LeerOrgsAll" />
+                    va
+                </RadzenTabsItem>
+                <RadzenTabsItem Text="Usuarios" Icon="refresh">
+                    <User LeerUsersC="LeerUsersAll" />
+                    aqui
+                </RadzenTabsItem>
+            </Tabs>
+        </RadzenTabs>
+        </CascadingValue>
+    </CascadingValue>
+  --Ttnka--
+@code {
+    int SelectedIndex = 0;
+}

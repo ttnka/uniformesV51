@@ -1,0 +1,35 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace uniformesV51.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link href="css/site.css" rel="stylesheet" />
+    <link href="uniformesV51.styles.css" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/material-base.css">
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/standard.css">
+</head>
+<body>
+    @RenderBody()
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            Ocurrio un error, esta aplicacion no respondara hasta volver a cargar los datos.
+        </environment>
+        <environment include="Development">
+            Ocurrio una excepcion, revisa tu navegador para detalles.
+        </environment>
+        <a href="" class="reload">Volver a Leer los datos</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.server.js"></script>
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+</body>
+</html>

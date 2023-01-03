@@ -1,0 +1,32 @@
+﻿@page "/user"
+@inherits UserBase
+@inject NotificationService NS
+@using uniformesV51.Model
+
+<div class="form-grup row">
+    <div class="col-sm-9">
+        <div class="nav-item px-3">
+            <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px"
+                          Text="Nuevo Usuario"
+                          Click="@InsertRow" Disabled="@Editando" />
+            <RadzenButton Icon="refresh" style="margin-bottom: 10px" ButtonStyle="ButtonStyle.Info"
+                          Click="@LeerUsers" />
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href=@($"/")>
+                <span class="oi oi-caret-left" aria-hidden="true"></span> Regresar a Inicio
+            </NavLink>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public void InsertRow()
+    {
+        // ver
+    }
+}
