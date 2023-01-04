@@ -4,26 +4,33 @@
 @inject NotificationService NS
 @using uniformesV51.Model
 
-    <CascadingValue Value="ElUser" Name="ElUserAll">
+@if (ElUser != null)
+{
+<CascadingValue Value="ElUser" Name="ElUserAll">
         <CascadingValue Value="BitacoraAll" Name="BitacoraAll">
-            <RadzenTabs @bind-SelectedIndex=@SelectedIndex>
+            <RadzenTabs>
             <Tabs>
-                <RadzenTabsItem Text="Inicio" Icon="refresh">
+                <RadzenTabsItem Text="Inicio">
                     Algo
                 </RadzenTabsItem>
-                <RadzenTabsItem Text="Organizaciones" Icon="refresh">
-                    <Org LeerOrgsC="LeerOrgsAll" />
+                <RadzenTabsItem Text="Organizaciones" >
+                    
                     va
                 </RadzenTabsItem>
-                <RadzenTabsItem Text="Usuarios" Icon="refresh">
-                    <User LeerUsersC="LeerUsersAll" />
+                <RadzenTabsItem Text="Usuarios">
+                    <User  />
                     aqui
                 </RadzenTabsItem>
             </Tabs>
         </RadzenTabs>
         </CascadingValue>
     </CascadingValue>
-  --Ttnka--
+}
+else
+{
+    <div class="spiner"></div>
+}
+--Ttnka--
 @code {
-    int SelectedIndex = 0;
+    
 }

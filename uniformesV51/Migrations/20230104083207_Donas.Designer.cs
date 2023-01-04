@@ -11,8 +11,8 @@ using uniformesV51.Data;
 namespace uniformesV51.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230103054333_Tripas")]
-    partial class Tripas
+    [Migration("20230104083207_Donas")]
+    partial class Donas
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

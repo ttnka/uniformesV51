@@ -46,7 +46,11 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<ContextMenuService>();
 
-//builder.Services.AddScoped<ApplicationDbContext, ApplicationDbContext>();
+builder.Services.AddTransient<ApplicationDbContext, ApplicationDbContext>();
+ 
+builder.Services.AddScoped<IAddUser, RAddUser>();
+builder.Services.AddScoped<IEnviarMail, REnviarMail>();
+
 
 builder.Services.AddScoped<Repo<Z100_Org, ApplicationDbContext>>();
 builder.Services.AddScoped<Repo<Z110_Usuarios, ApplicationDbContext>>();

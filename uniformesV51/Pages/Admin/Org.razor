@@ -190,7 +190,7 @@ else
 
     async Task EditRow(Z100_Org org)
     {
-        await OrgGrid.EditRow(org);
+        await OrgGrid!.EditRow(org);
         Editando = !Editando;
     }
     async void OnUpdateRow(Z100_Org org)
@@ -217,13 +217,13 @@ else
         org.Moral = org.Rfc.Length == 13 ? false : true;
         org.Rfc = org.Rfc.ToUpper();
 
-        await OrgGrid.UpdateRow(org);
+        await OrgGrid!.UpdateRow(org);
     }
     void CancelEdit(Z100_Org org)
     {
         if (org == OrgToInsert) OrgToInsert = null!;
         Editando = !Editando;
-        OrgGrid.CancelEditRow(org);
+        OrgGrid!.CancelEditRow(org);
     }
     async Task InsertRow()
     {
@@ -232,7 +232,7 @@ else
         OrgToInsert.Estado = 3;
         Editando = !Editando;
 
-        await OrgGrid.InsertRow(OrgToInsert);
+        await OrgGrid!.InsertRow(OrgToInsert);
 
     }
     async void OnCreateRow(Z100_Org org)

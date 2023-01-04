@@ -1,0 +1,138 @@
+﻿@page "/registro"
+
+@inherits RegistroBase
+@inject NotificationService NS
+@using uniformesV51.Model
+
+<h3>Registro Nuevo Usuario</h3>
+
+<RadzenCard>
+    @if (LasOrgs != null && LosNiveles != null)
+    {
+        <RadzenTemplateForm @ref="AddUserForm" Data="@NewAddUser"
+                        TItem="@AddUser" Submit="@SaveNewUsuario">
+            <div class="form-grup row">
+                <label for="mail" class="col-sm-3 col-form-label">Email</label>
+                <div class="col-sm-9">
+
+                    <RadzenTextBox Name="Mail" @bind-Value=@NewAddUser.Mail
+                               style="display: block; width: 100%;" />
+                    <RadzenRequiredValidator Component="Mail" Text="El Mail es obligatorio " />
+                    <RadzenEmailValidator Component="Mail" Text="El Formato de Mail es Incorrecto!" />
+                </div>
+            </div>
+
+            <div class="form-grup row">
+                <label for="pass" class="col-sm-3 col-form-label">Password </label>
+                <div class="col-sm-9">
+                    <RadzenPassword Name="Pass" @bind-Value=@NewAddUser.Pass
+                                Placeholder="6 Caracteres, 1 numero, 1 letra como minimo!"
+                                Change="@Valido" Style="width: 100%;" AutoComplete="false" />
+
+                    <RadzenRequiredValidator Component="Pass" Text="El Password es obligatorio!" />
+                    <br />
+                </div>
+            </div>
+            <div class="form-grup row">
+                <label for="confirmpass" class="col-sm-3 col-form-label">Confirma tu Password</label>
+                <div class="col-sm-9">
+                    <RadzenPassword Name="ConfirmPass" @bind-Value=@NewAddUser.ConfirmPass
+                                Change="@Valido" Style="width: 100%;" />
+                    <RadzenRequiredValidator Component="ConfirmPass" Text="El Password es obligatorio!" />
+                    <RadzenCompareValidator Visible=@(!string.IsNullOrEmpty(NewAddUser.ConfirmPass))
+                                        Value=@NewAddUser.Pass Component="ConfirmPass"
+                                        Text="Confirmacion del password no coincide" />
+                </div>
+            </div>
+            <div class="form-grup row">
+                <label for="orgid" class="col-sm-3 col-form-label">Organizacion</label>
+                <div class="col-sm-9">
+                    <RadzenDropDown Name="OrgId" Data=@LasOrgs @bind-Value=@NewAddUser.OrgId
+                                ValueProperty="OrgId" TextProperty="Comercial" AllowClear="true"
+                                Style="width: 100%;" />
+                </div>
+            </div>
+            <div class="form-grup row">
+                <label for="nivel" class="col-sm-3 col-form-label">Nivel</label>
+                <div class="col-sm-9">
+                    <RadzenDropDown Name="Nivel" Data=@LosNiveles @bind-Value=@NewAddUser.Nivel
+                                ValueProperty="Key" TextProperty="Value" AllowClear="true"
+                                Style="width: 100%;" />
+                </div>
+            </div>
+
+            <div class="form-grup row">
+                <label for="botones" class="col-sm-3 col-form-label"></label>
+                <div class="col-sm-7">
+                    <label>Tu password debe contener</label> <br />
+                    @if (!IsLargo)
+                    {
+                        <label style="color:red"><b>6 caracteres minimo</b></label>
+
+                        <br />
+                    }
+                    @if (!Mayuscula)
+                    {
+                        <label style="color:red"><b>Una letra mayúscula </b></label> <br />
+                    }
+
+                    @if (!Minuscula)
+                    {
+                        <label style="color:red"><b>Una letra minúscula </b></label> <br />
+                    }
+
+                    @if (!Numero)
+                    {
+                        <label style="color:red"><b>Un numero </b></label>
+
+                        <br />
+                    }
+                    @if (Diferente)
+                    {
+                        <label style="color:red"><b>Confirmacion del password no coincide!</b></label>
+                    }
+                </div>
+                <div class="col-sm-2">
+                </div>
+            </div>
+            <div class="form-grup row">
+                <label for="botones" class="col-sm-6 col-form-label"></label>
+
+                <div class="col-sm-2">
+                    <RadzenButton ButtonType="ButtonType.Reset" Click="ElReset" Text="Cancelar"  />
+                </div>
+                <div class="col-sm-2">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Registro" Disabled=!IsRegistro />
+                </div>
+                <div class="col-sm-2">
+                </div>
+            </div>
+
+        </RadzenTemplateForm>
+    }
+    else
+    {
+        <div class="spinner"></div>
+    }
+</RadzenCard>
+--Tatanka--
+
+@code {
+    async void ElNewUsuario()
+    {
+        ShowNotification(ElMsn("Ok", "Nuevo",
+            $"Estamos creado un nuevo USUARIO!!! ", 0));
+        await SaveNewUsuario();
+    }
+    void ElReset()
+    {
+        NewAddUser.Mail = "";
+        NewAddUser.Pass = "";
+        NewAddUser.RecordarMe = false;
+    }
+    public void ShowNotification(NotificationMessage message)
+    {
+        NS.Notify(message);
+    }
+
+}

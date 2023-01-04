@@ -21,6 +21,7 @@ namespace uniformesV51.Pages.Admin
 
             var bitaTemp = MyFunc.MakeBitacora(ElUser.UserId, ElUser.OrgId, 
                 "Consulto listado de usuarios", false);
+
             await BitacoraC.InvokeAsync(bitaTemp);
 
         }

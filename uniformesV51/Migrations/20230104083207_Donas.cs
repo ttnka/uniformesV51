@@ -16,7 +16,7 @@ namespace uniformesV51.Migrations
                     BitacoraId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Fecha = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UsuariosId = table.Column<string>(type: "longtext", nullable: false)
+                    UserId = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Desc = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),

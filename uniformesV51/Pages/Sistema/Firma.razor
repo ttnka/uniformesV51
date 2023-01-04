@@ -1,0 +1,82 @@
+﻿@page "/firma"
+@page "/firma/{UrlRegreso}"
+
+@inherits FirmaBase
+@using uniformesV51.Model
+
+
+<h3>Firma con Email</h3>
+
+<div class="form-grup row">
+    <div class="col-sm-8">
+        <RadzenCard>
+            <RadzenTemplateForm Data="@ElNuevo" TItem="@AddUser" Submit="@FirmaInn">
+                <div class="form-grup row">
+                    <label for="mail" class="col-sm-3 col-form-label">Email</label>
+                    <div class="col-sm-9">
+
+                        <RadzenTextBox Name="Mail" @bind-Value=@ElNuevo.Mail
+                                       style="display: block; width: 90%;" />
+                        <RadzenRequiredValidator Component="Mail" Text="El Mail es obligatorio " />
+                        <RadzenEmailValidator Component="Mail" Text="El Formato de Mail es Incorrecto!" />
+                    </div>
+                </div>
+
+                <div class="form-grup row">
+                    <label for="pass" class="col-sm-3 col-form-label">Password </label>
+                    <div class="col-sm-9">
+                        <RadzenPassword Name="Pass" @bind-Value=@ElNuevo.Pass Style="width: 90%;" />
+                        <RadzenRequiredValidator Component="Pass" Text="El Password es obligatorio!" />
+                        <br />
+                    </div>
+                </div>
+
+                <div class="form-grup row">
+                    <div class="col-sm-3">
+                    </div>
+                    <div class="col-sm-3">
+                        <RadzenButton ButtonType="ButtonType.Reset" Text="Cancelar"
+                                      Shade="Shade.Lighter" Click=@(args => OnClick()) />
+                    </div>
+                    <div class="col-sm-3">
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Registro"
+                                      Shade="Shade.Lighter" />
+                    </div>
+                </div>
+                <div class="form-grup row">
+                    <label for="recordarme" class="col-sm-3 col-form-label"></label>
+                    <div class="col-sm-6">
+                        <NavLink class="nav-link" href="/recuperar">Olvide Mi Password</NavLink>
+                    </div>
+                </div>
+                <div class="form-grup row">
+                    <label for="recordarme" class="col-sm-3 col-form-label">Recordarme </label>
+                    <div class="col-sm-9">
+                        <RadzenSelectBar @bind-Value=@ElNuevo.RecordarMe TValue="bool">
+                            <Items>
+                                <RadzenSelectBarItem Text="No, gracias!" Value="false" />
+                                <RadzenSelectBarItem Text="Recordarme!" Value="true" />
+                            </Items>
+                        </RadzenSelectBar>
+                    </div>
+                </div>
+
+            </RadzenTemplateForm>
+
+        </RadzenCard>
+    </div>
+    <div class="col-sm-4">
+    </div>
+</div>
+
+
+@code {
+
+    void OnClick()
+    {
+        NM.NavigateTo("/");
+    }
+
+}
+
+}

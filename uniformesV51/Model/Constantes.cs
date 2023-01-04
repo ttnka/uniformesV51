@@ -3,13 +3,13 @@
     public class Constantes
     {
         public const string ElDominio = "Zuverworks.com";
-
         // Mail 01
 
         public const string DeNombreMail01 = "WebMaster";
         public const string DeMail01 = "info@zuverworks.com";
         public const string ServerMail01 = "mail.omnis.com";
         public const int PortMail01 = 587;
+        public const int Nivel01 = 1;
         public const string UserNameMail01 = "info@zuverworks.com";
         public const string PasswordMail01 = "2468022Ih.";
 
@@ -21,13 +21,23 @@
         public const string UserNameMail02 = "@zuverworks.com";
         public const string PasswordMail02 = "";
 
-        // Registro Inicial Publico en GENERAL
+        // Registro Inicial Publico en GENERAL Organizacion
 
         public const string PgRfc = "PGE010101AAA";
         public const string PgRazonSocial = "Publico en General";
         public const int PgEstado = 1;  // En caso de no quere que se utilice poner 2
         public const bool PgStatus = true;
         public const string PgMail = "peg@peg.com";
+
+        // Registro Usuario Publico en GENERAL
+
+        public const string DeNombreMailPublico = "Publico";
+        public const string DeMailPublico = "publico@zuverworks.com";
+        public const int EstadoPublico = 1;
+        public const int NivelPublico = 1;
+        public const string UserNameMailPublico = "publico@zuverworks.com";
+        public const string PasswordMailPublico = "PublicoLibre1.";
+
 
         // Registro de Sistema
         public const string SyRfc = "WEB010101MAS";
@@ -37,5 +47,7 @@
         public const string SyMail = "info@zuverworks.com";
         public const string SysPassword = "24680212Ih.";
 
+        public const string Arranque = "2.468022";
+        
     }
 }
