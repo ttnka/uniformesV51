@@ -42,24 +42,31 @@ namespace uniformesV51.Model
             ApiRespuesta<AddUser> apiRespuesta = new() 
                 { Exito = false, Data = addUsuario };
             string texto = "";
-            try
+            
             {
-                var resultado = await _signInManager.PasswordSignInAsync(
-                    addUsuario.Mail, addUsuario.Pass, addUsuario.RecordarMe,
-                    lockoutOnFailure: false);
-                addUsuario.Positivo = resultado.Succeeded;
-                apiRespuesta.Exito= true;
-                texto = $"Firmo con exito {addUsuario.Mail}";
-                await WriteBitacora("Vacio", "Vacio", texto, true);
-                return apiRespuesta;
+                try
+                {
+                    
+                    var resultado = await _signInManager.PasswordSignInAsync(
+                        addUsuario.Mail, addUsuario.Pass, addUsuario.RecordarMe,
+                        lockoutOnFailure: false);
+
+                    addUsuario.Positivo = resultado.Succeeded;
+                    
+                    apiRespuesta.Exito = true;
+                    texto = $"Firmo con exito {addUsuario.Mail}";
+                    await WriteBitacora("Vacio", "Vacio", texto, true);
+                    return apiRespuesta;
+                }
+                catch (Exception ex)
+                {
+                    apiRespuesta.MsnError = new List<string> { ex.Message };
+                    texto = $"Intento ingresar {addUsuario.Mail} pass XXX ";
+                    await WriteBitacora("Vacio", "Vacio", texto, false);
+                    return apiRespuesta;
+                }
             }
-            catch (Exception ex)
-            {
-                apiRespuesta.MsnError = new List<string> { ex.Message };
-                texto = $"Intento ingresar {addUsuario.Mail} pass XXX ";
-                await WriteBitacora("Vacio", "Vacio", texto, false);
-                return apiRespuesta;
-            } 
+            
         }
 
         public async Task<ApiRespuesta<AddUser>> InsertNew(AddUser NewUser)

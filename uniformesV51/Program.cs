@@ -33,8 +33,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
     options.User.RequireUniqueEmail = true;
     options.User.AllowedUserNameCharacters =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddScoped<SignInManager<IdentityUser>>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -55,6 +57,7 @@ builder.Services.AddScoped<IEnviarMail, REnviarMail>();
 builder.Services.AddScoped<Repo<Z100_Org, ApplicationDbContext>>();
 builder.Services.AddScoped<Repo<Z110_Usuarios, ApplicationDbContext>>();
 builder.Services.AddScoped<Repo<Z190_Bitacora, ApplicationDbContext>>();
+
 
 var app = builder.Build();
 

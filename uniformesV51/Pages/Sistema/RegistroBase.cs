@@ -42,9 +42,8 @@ namespace uniformesV51.Pages.Sistema
             NewAddUser.UsuarioId = ElUser.UserId;
             NewAddUser.UsuarioOrg = ElUser.OrgId;
             NewAddUser.UsuarioMail = ElUser.OldEmail;
-            NewAddUser.UsuarioOrgName =
-             LasOrgs.FirstOrDefault(x => x.OrgId == ElUser.OrgId).RazonSocial ??
-              "Sin Razon Social";
+            var rs = LasOrgs.FirstOrDefault(x => x.OrgId == ElUser.OrgId).RazonSocial;
+            NewAddUser.UsuarioOrgName = rs ?? "Sin Razon Social";
         }
         protected void LeerNiveles()
         {

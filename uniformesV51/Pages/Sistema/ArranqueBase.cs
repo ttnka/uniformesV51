@@ -22,7 +22,7 @@ namespace uniformesV51.Pages.Sistema
         {
             var emp1 = await OrgsRepo.Get(x => x.Rfc == Constantes.PgRfc);
             var emp2 = await OrgsRepo.Get(x => x.Rfc == Constantes.SyRfc);
-            if(emp1 != null && emp2 != null) { NM.NavigateTo("/", true); }
+            if((emp1 != null && emp1.Count() > 0) && (emp2 != null && emp2.Count()>0)) { NM.NavigateTo("/", true); }
         }
 
         protected async Task RunInicio()
