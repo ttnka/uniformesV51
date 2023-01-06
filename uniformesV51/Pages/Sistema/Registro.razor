@@ -31,8 +31,36 @@
 
                     <RadzenRequiredValidator Component="Pass" Text="El Password es obligatorio!" />
                     <br />
+                    <label>Tu password debe contener</label> <br />
+                    @if (!IsLargo && !string.IsNullOrEmpty(NewAddUser.ConfirmPass))
+                    {
+                        <label style="color:red"><b>6 caracteres minimo</b></label>
+
+                        <br />
+                    }
+                    @if (!Mayuscula && !string.IsNullOrEmpty(NewAddUser.ConfirmPass))
+                    {
+                        <label style="color:red"><b>Una letra mayúscula </b></label> <br />
+                    }
+
+                    @if (!Minuscula && !string.IsNullOrEmpty(NewAddUser.ConfirmPass))
+                    {
+                        <label style="color:red"><b>Una letra minúscula </b></label> <br />
+                    }
+
+                    @if (!Numero && !string.IsNullOrEmpty(NewAddUser.ConfirmPass))
+                    {
+                        <label style="color:red"><b>Un numero </b></label>
+
+                        <br />
+                    }
+                    @if (Diferente && !string.IsNullOrEmpty(NewAddUser.ConfirmPass))
+                    {
+                        <label style="color:red"><b>Confirmacion del password no coincide!</b></label>
+                    }
                 </div>
             </div>
+
             <div class="form-grup row">
                 <label for="confirmpass" class="col-sm-3 col-form-label">Confirma tu Password</label>
                 <div class="col-sm-9">
@@ -63,34 +91,7 @@
 
             <div class="form-grup row">
                 <label for="botones" class="col-sm-3 col-form-label"></label>
-                <div class="col-sm-7">
-                    <label>Tu password debe contener</label> <br />
-                    @if (!IsLargo)
-                    {
-                        <label style="color:red"><b>6 caracteres minimo</b></label>
-
-                        <br />
-                    }
-                    @if (!Mayuscula)
-                    {
-                        <label style="color:red"><b>Una letra mayúscula </b></label> <br />
-                    }
-
-                    @if (!Minuscula)
-                    {
-                        <label style="color:red"><b>Una letra minúscula </b></label> <br />
-                    }
-
-                    @if (!Numero)
-                    {
-                        <label style="color:red"><b>Un numero </b></label>
-
-                        <br />
-                    }
-                    @if (Diferente)
-                    {
-                        <label style="color:red"><b>Confirmacion del password no coincide!</b></label>
-                    }
+                <div class="col-sm-7">  
                 </div>
                 <div class="col-sm-2">
                 </div>

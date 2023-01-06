@@ -4,6 +4,8 @@ using uniformesV51.Model;
 using uniformesV51.Data;
 using Radzen;
 using Microsoft.Net.Http.Headers;
+using uniformesV51.Pages.Sistema;
+using System.Runtime.InteropServices;
 
 namespace uniformesV51.Pages.Admin
 {
@@ -11,7 +13,7 @@ namespace uniformesV51.Pages.Admin
     {
         [Inject]
         public Repo<Z100_Org, ApplicationDbContext> OrgRepo { get; set; } = default!;
-        
+        [CascadingParameter(Name = "LasOrgsAll")]
         public List<Z100_Org> LasOrgs { get; set; } = new List<Z100_Org>();
         protected bool Editando = false;
         public RadzenDataGrid<Z100_Org>? OrgGrid { get; set; } =
@@ -21,17 +23,25 @@ namespace uniformesV51.Pages.Admin
         protected string ErrorMsn = string.Empty;
         [Parameter]
         public EventCallback LeerOrgsC { get; set; }
-        [CascadingParameter (Name ="BitacoraAll" )]
+        [Parameter]
         public EventCallback<Z190_Bitacora> BitacoraC { get; set; }
+        protected bool Arranco = false;
         protected override async Task OnParametersSetAsync()
         {
-            await LeerOrgsC.InvokeAsync();
+            if(!Arranco)
+            {
+                Arranco = true;
+                await Arranque();
+                if (LasOrgs.Count() > 0) DicAdd(LasOrgs); 
+            }
+        }
 
+        protected async Task Arranque()
+        {
             var bitaTemp = MyFunc.MakeBitacora(ElUser.UserId, ElUser.OrgId,
-                "Consulto listado de usuarios", false);
+                            "Organizaciones, Consulto listado de organizaciones", false);
             await BitacoraC.InvokeAsync(bitaTemp);
         }
-        
         public async Task<bool> Servicio(string tipo, Z100_Org org)
         {
             if (org == null) return false;    
@@ -43,7 +53,7 @@ namespace uniformesV51.Pages.Admin
                 case "Update":
                     var orgUpdate = await OrgRepo.Update(org);
                         return orgUpdate != null ? true : false;
-                    
+                 
                 default: 
                     return false;         
             }
@@ -51,9 +61,10 @@ namespace uniformesV51.Pages.Admin
         protected async Task LeerOrgs()
         {
             await LeerOrgsC.InvokeAsync();
+            DicAdd(LasOrgs);
             Editando = false;
         }
-        protected void DicAdd(IEnumerable<Z100_Org> LasO)
+        protected void DicAdd(List<Z100_Org> LasO)
         {
             foreach (var L in LasO)
             {

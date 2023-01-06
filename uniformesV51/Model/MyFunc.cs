@@ -49,11 +49,25 @@
                     return $"{lahora.Hour}:{mincero}{lahora.Minute}:{segcero}{lahora.Second}";
             }
         }
-        public static int Inscripcion(string texto)
+        public static string FormatoFecha(string formato, DateTime lafecha)
         {
-            // Inscripcion = 1
-            // Renovacion = 2
-            return texto == "Inscripcion" ? 1 : 2;
+            string resultado = string.Empty;
+
+            switch (formato)
+            {
+                case "DD/MMM/AA":
+                    resultado = $"{lafecha.Day}/";
+                    resultado += $"{MesTitulo(lafecha.Month, 0)}/";
+                    resultado += $"{Ejercicio(lafecha)}";
+                    break;
+
+            }
+            return resultado;
+        }
+        public static int DameRandom(int inicio, int final)
+        {
+            Random rnd = new Random();
+            return rnd.Next(inicio, final);
         }
     }
 }

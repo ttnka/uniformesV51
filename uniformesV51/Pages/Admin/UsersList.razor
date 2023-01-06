@@ -1,0 +1,81 @@
+﻿
+
+@inherits UsersListBase
+@using uniformesV51.Model
+
+<div class="form-grup row">
+    <div class="col-sm-9">
+        <div class="nav-item px-3">
+            <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px"
+                          Text="Nueva Organizacion"
+                          Click="@InsertRow" Disabled="@Editando" />
+            <RadzenButton Icon="refresh" style="margin-bottom: 10px" ButtonStyle="ButtonStyle.Info"
+                          Click="@LeerOrgs" />
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href=@($"/")>
+                <span class="oi oi-caret-left" aria-hidden="true"></span> Regresar a Inicio
+            </NavLink>
+        </div>
+    </div>
+</div>
+
+@if(LosUsers != null)
+{
+    <RadzenCard>       
+        <RadzenDataGrid @ref="UsersGrid" AllowFiltering="true" AllowPaging="true" PageSize="50" 
+                AllowSorting="true" AllowColumnResize="true"
+                ExpandMode="DataGridExpandMode.Single" AllowGrouping="false"
+                EditMode="DataGridEditMode.Single" 
+                Data="@LosUsers" TItem="Z110_Usuarios" RowUpdate="@OnUpdateRow" 
+                RowCreate="@OnCreateRow" >
+
+                <Columns>
+
+                <RadzenDataGridColumn TItem="Z110_Usuarios" Title="Id" Filterable="false"
+                                  Width="50px">
+                    <Template Context="datos">
+                        @(LosUsers.IndexOf(datos) + 1)
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Z110_Usuarios" Property="Paterno" Title="Nombre" Filterable="true"
+                                  Width="250px">
+                    <Template Context="datos">
+                        @datos.Nombre @datos.Paterno @datos.Materno
+                    </Template>
+                    <EditTemplate Context="datos">
+                        <RadzenTextBox Name="Nombre" @bind-Value="datos.Nombre" Style="width: 90%" /> <br>
+                        <RadzenLengthValidator Component="Nombre" Min="1" Max="25"
+                                           Text="El Nombre es Requerido" /> <br />
+                        <RadzenTextBox Name="Paterno" @bind-Value="datos.Paterno" Style="width: 90%" /> <br>
+                        <RadzenLengthValidator Component="Paterno" Min="1" Max="25"
+                                           Text="El Paterno es Requerido" /> <br />
+                        <RadzenTextBox Name="Materno" @bind-Value="datos.Materno" Style="width: 90%" /> <br>
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Z110_Usuarios" Property="OldEmail" Title="Email" 
+                                Filterable="true" Width="150px" />
+                <RadzenDataGridColumn TItem="Z110_Usuarios" Title="Nivel" Filterable="false"
+                                  Width="150px">
+                    <Template Context="datos">
+                        @datos.Nivel
+                    </Template>
+                </RadzenDataGridColumn>
+
+
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenCard>
+}
+else
+{
+    <div class="spinner"></div>
+}
+
+
+@code {
+
+}

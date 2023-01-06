@@ -1,29 +1,39 @@
 ﻿@page "/admin"
 
 @inherits IndexAdminBase
+@using uniformesV51.Pages.Sistema
 @inject NotificationService NS
 @using uniformesV51.Model
 
 @if (ElUser != null)
 {
 <CascadingValue Value="ElUser" Name="ElUserAll">
-    <CascadingValue Value="BitacoraAll" Name="BitacoraAll">
-        <RadzenTabs>
+    
+        <CascadingValue Value="LasOrgsAll" Name="LasOrgsAll">
+            <RadzenTabs>
             <Tabs>
                 <RadzenTabsItem Text="Inicio">
                     Algo
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Organizaciones" >
+                    <Org LeerOrgsC="LeerOrgsAll" BitacoraC="BitacoraAll"  />
                     
-                    va
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Usuarios">
-                    <uniformesV51.Pages.Sistema.Registro />
+                    <RadzenAccordion>
+                        <Items>
+                            <RadzenAccordionItem Text="Nuevo Usuario" Icon="plus">
+                                <Registro LeerOrgsC="LeerOrgsAll" BitacoraC="BitacoraAll" />
+                            </RadzenAccordionItem>
+                        </Items>
+                    </RadzenAccordion>
                     
+
                 </RadzenTabsItem>
             </Tabs>
         </RadzenTabs>
-    </CascadingValue>
+        </CascadingValue>
+    
 </CascadingValue>
 }
 else
@@ -31,6 +41,6 @@ else
     <div class="spiner"></div>
 }
 --Ttnka--
-@code {
-    
+@code 
+{
 }

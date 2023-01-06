@@ -25,25 +25,33 @@ namespace uniformesV51.Pages.Sistema
         public IAddUser AddUserRepo { get; set; } = default!;
         [Parameter]
         public EventCallback LeerOrgsC { get; set; }
-        [CascadingParameter(Name = "BitacoraAll")]
+        [Parameter]
         public EventCallback<Z190_Bitacora> BitacoraC { get; set; }
         protected override async Task OnParametersSetAsync()
         {
-            LeerNiveles();
-            await LeerOrgsC.InvokeAsync();
-            LlenarNewAddUser();
+            if (LasOrgs.Count() > 0 && LosNiveles.Count() < 1 && 
+                string.IsNullOrEmpty(NewAddUser.OrgId)) 
+                await Arranque();
             
-            var txt = "Entro a registro de nuevos usuarios";
-            var bitaTemp = MyFunc.MakeBitacora(ElUser.UserId, ElUser.OrgId, txt, false);
+        }
+        protected async Task Arranque()
+        {
+            LeerNiveles();
+            LlenarNewAddUser();
+            var bitaTemp = MyFunc.MakeBitacora(ElUser.UserId, ElUser.OrgId, 
+                "Registro, Entro a registro de nuevos usuarios", false);
             await BitacoraC.InvokeAsync(bitaTemp);
         }
         protected void LlenarNewAddUser()
-        {   
-            NewAddUser.UsuarioId = ElUser.UserId;
-            NewAddUser.UsuarioOrg = ElUser.OrgId;
-            NewAddUser.UsuarioMail = ElUser.OldEmail;
-            var rs = LasOrgs.FirstOrDefault(x => x.OrgId == ElUser.OrgId).RazonSocial;
-            NewAddUser.UsuarioOrgName = rs ?? "Sin Razon Social";
+        {
+            if (!string.IsNullOrEmpty(ElUser.OrgId) && LasOrgs.Count() > 0)
+            {
+                NewAddUser.UsuarioId = ElUser.UserId;
+                NewAddUser.UsuarioOrg = ElUser.OrgId;
+                NewAddUser.UsuarioMail = ElUser.OldEmail;
+                var rs = LasOrgs.FirstOrDefault(x => x.OrgId == ElUser.OrgId).RazonSocial;
+                NewAddUser.UsuarioOrgName = rs ?? "Sin Razon Social";
+            }
         }
         protected void LeerNiveles()
         {
@@ -69,11 +77,7 @@ namespace uniformesV51.Pages.Sistema
         public async Task SaveNewUsuario()
         {
             await AddUserRepo.InsertNew(NewAddUser);
-
         }
-        [CascadingParameter]
-        public Task<AuthenticationState> AuthStateTask { get; set; } = default!;
-        public string UserIdLogAll { get; set; } = string.Empty;
         
         public MyFunc MyFunc { get; set; } = new MyFunc();
         

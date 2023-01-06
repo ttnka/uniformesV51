@@ -14,12 +14,13 @@ namespace uniformesV51.Pages.Admin
         public Repo<Z110_Usuarios, ApplicationDbContext> UserRepo { get; set; } = default!;
         [Inject]
         public Repo<Z190_Bitacora, ApplicationDbContext> BitaRepo { get; set; } = default!;
-        
-        public int SelectedIndex { get; set; } = 0;
+        public MyFunc MyFunc { get; set; } = new();
         string ErrorMsn = "";
         protected override async Task OnInitializedAsync()
         {
             await LeerUser();
+            await LeerOrgsAll();
+            await LeerUsersAll();
         }
         [Inject]
         public NavigationManager NM { get; set; } = default!;
@@ -27,15 +28,25 @@ namespace uniformesV51.Pages.Admin
         public Task<AuthenticationState> AuthStateTask { get; set; } = default!;
         
         public Z110_Usuarios ElUser { get; set; } = new Z110_Usuarios();
+        [Inject]
+        public AuthenticationStateProvider GetAuthenticationStateAsync { get; set; } = default!;
+
         public async Task<bool> LeerUser()
         {
             try
-            {   
-                var autState = await AuthStateTask;
-                var user = autState.User;
-                if (!user.Identity!.IsAuthenticated) NM.NavigateTo("/firma?laurl=/admin");
-                var UserIdLogAll = user.FindFirst(c => c.Type == "sub")?.Value!;
-                ElUser = await UserRepo.GetById(UserIdLogAll);
+            {
+                var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+                var user = authstate.User;
+                if (!user.Identity!.IsAuthenticated)
+                    NM.NavigateTo("Identity/Account/Login?ReturnUrl=/admin", true);
+                ElUser = (await UserRepo.Get(x => x.OldEmail == user.Identity.Name))
+                    .FirstOrDefault() ?? new();
+                if (ElUser == null || string.IsNullOrEmpty(ElUser.UserId))
+                    NM.NavigateTo("/Bloqueado", true);
+                var bitaTemp = MyFunc.MakeBitacora(ElUser!.UserId, ElUser!.OrgId,
+                            "Bitacora, Se consulto listado de bitacora!", false);
+                await BitaRepo.Insert(bitaTemp);
+
                 return true;
             }
             catch (Exception ex)
@@ -76,6 +87,7 @@ namespace uniformesV51.Pages.Admin
                 if (resultado != null)
                 {
                     LasOrgsAll = resultado.ToList<Z100_Org>();
+                    Console.WriteLine(LasOrgsAll.Count());
                 }
                 else
                 {
@@ -100,5 +112,6 @@ namespace uniformesV51.Pages.Admin
                 await BitaRepo.Insert(bita);
             }
         }
+        
     }
 }
