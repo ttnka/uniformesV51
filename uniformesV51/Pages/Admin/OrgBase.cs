@@ -80,5 +80,30 @@ namespace uniformesV51.Pages.Admin
         [CascadingParameter (Name="ElUserAll")]
         public Z110_Usuarios ElUser { get; set; } = new();
 
+        public NotificationMessage ElMsn(string tipo, string titulo,
+            string mensaje, int duracion)
+        {
+            NotificationMessage respuesta = new();
+            switch (tipo.ToLower())
+            {
+                case "info":
+                    respuesta.Severity = NotificationSeverity.Info;
+                    break;
+                case "error":
+                    respuesta.Severity = NotificationSeverity.Error;
+                    break;
+                case "warning":
+                    respuesta.Severity = NotificationSeverity.Warning;
+                    break;
+                default:
+                    respuesta.Severity = NotificationSeverity.Success;
+                    break;
+            }
+            respuesta.Summary = titulo;
+            respuesta.Detail = mensaje;
+            respuesta.Duration = 4000 + duracion;
+            return respuesta;
+        }
+
     }
 }

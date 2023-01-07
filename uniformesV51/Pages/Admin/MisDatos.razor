@@ -1,0 +1,113 @@
+﻿
+@inherits MisDatosBase
+@inject NotificationService NS
+@inject NavigationManager NM
+@using uniformesV51.Model
+
+
+<RadzenTemplateForm Data="@ElUser" TItem="@Z110_Usuarios" Submit="@MisDatosUpdate">
+    <div class="form-grup row">
+        <label for="Editar" class="col-sm-3 col-form-label">Editar Mis datos!</label>
+        <div class="col-sm-9">
+            No
+            <RadzenSwitch Name="Editar" @bind-Value="Editando" />
+            Si
+        </div>
+    </div>
+    <div class="form-grup row">
+        <label for="mail" class="col-sm-3 col-form-label">Email</label>
+        <div class="col-sm-9">
+            @ElUser.OldEmail
+        </div>
+    </div>
+
+    <div class="form-grup row">
+        <label for="pass" class="col-sm-3 col-form-label">Password </label>
+        <div class="col-sm-9">
+            <RadzenButton Click="CambioPass" Text="Cambia tu password"
+                          Shade="Shade.Lighter" />
+        </div>
+    </div>
+
+    <div class="form-grup row">
+        <label for="Nombre" class="col-sm-3 col-form-label">Nombre</label>
+        <div class="col-sm-9">
+            <RadzenTextBox Name="Nombre" @bind-Value="ElUser.Nombre" 
+                    Style="width: 90%" Disabled=@(!Editando) /> <br>
+            <RadzenLengthValidator Component="Nombre" Min="1" Max="25"
+                                   Text="El Nombre es Requerido" />           
+        </div>
+    </div>
+    <div class="form-grup row">
+        <label for="Paterno" class="col-sm-3 col-form-label">Paterno</label>
+        <div class="col-sm-9">
+            <RadzenTextBox Name="Paterno" @bind-Value="ElUser.Paterno"
+                           Style="width: 90%" Disabled=@(!Editando) /> <br>
+            <RadzenLengthValidator Component="Paterno" Min="1" Max="25"
+                                   Text="El Paterno es Requerido" />
+        </div>
+    </div>
+
+    <div class="form-grup row">
+        <label for="Materno" class="col-sm-3 col-form-label">Materno</label>
+        <div class="col-sm-9">
+            <RadzenTextBox Name="Materno" @bind-Value="ElUser.Materno"
+                           Style="width: 90%" Disabled=@(!Editando) />
+            
+        </div>
+    </div>
+
+    <div class="form-grup row">
+        <label for="nivel" class="col-sm-3 col-form-label">Nivel</label>
+        <div class="col-sm-9">
+            @LosNivelesTitulos.FirstOrDefault(x=>x.Key==ElUser.Nivel).Value
+        </div>
+    </div>
+
+    <div class="form-grup row">
+        <label for="botones" class="col-sm-3 col-form-label"></label>
+        <div class="col-sm-5">
+            
+        </div>
+        <div class="col-sm-2">
+        </div>
+    </div>
+    <div class="form-grup row">
+        <label for="botones" class="col-sm-3 col-form-label"></label>
+        <div class="col-sm-3">
+            <RadzenButton ButtonType="ButtonType.Reset" Text="Cancelar"
+                          Shade="Shade.Lighter" Visible="false" />
+
+        </div>
+        <div class="col-sm-3">
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Actualizar"
+                          Shade="Shade.Lighter" Disabled=@(!Editando) />
+        </div>
+    </div>
+
+</RadzenTemplateForm>
+
+@code {
+    void CambioPass()
+    {
+        NM.NavigateTo("Identity/Account/Manage?ReturnUrl=/admin", true);
+    }
+    public async Task MisDatosUpdate()
+    {
+        var resultado = await UsersRepo.Update(ElUser);
+        Editando = false;
+
+        if (resultado.Status)
+        { 
+            ShowNotification(ElMsn("Ok", "Nuevo",
+                $"Estamos creado un nuevo USUARIO!!! ", 0));
+            var bitaTemp = MyFunc.MakeBitacora(ElUser.UserId, ElUser.OrgId,
+                $"Mis datos, Modifico sus datos {ElUser.Nombre} {ElUser.Paterno} {ElUser.Materno} "
+                , false);
+        }
+    }
+    public void ShowNotification(NotificationMessage message)
+    {
+        NS.Notify(message);
+    }
+}

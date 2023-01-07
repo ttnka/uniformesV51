@@ -5,15 +5,15 @@
 @inject NotificationService NS
 @using uniformesV51.Model
 
-@if (ElUser != null)
+@if (ElUser != null && !string.IsNullOrEmpty(ElUser.OrgId) && ElUser.OrgId.Length > 10)
 {
 <CascadingValue Value="ElUser" Name="ElUserAll">
-    
+    <CascadingValue Value="LosUsersAll" Name="LosUsersAll">
         <CascadingValue Value="LasOrgsAll" Name="LasOrgsAll">
             <RadzenTabs>
             <Tabs>
                 <RadzenTabsItem Text="Inicio">
-                    Algo
+                    <MisDatos BitacoraC="BitacoraAll" />
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Organizaciones" >
                     <Org LeerOrgsC="LeerOrgsAll" BitacoraC="BitacoraAll"  />
@@ -27,13 +27,14 @@
                             </RadzenAccordionItem>
                         </Items>
                     </RadzenAccordion>
-                    
+                   
+                    <UsersList LeerUsersC="LeerUsersAll" BitacoraC="BitacoraAll" />
 
                 </RadzenTabsItem>
             </Tabs>
         </RadzenTabs>
         </CascadingValue>
-    
+    </CascadingValue>
 </CascadingValue>
 }
 else

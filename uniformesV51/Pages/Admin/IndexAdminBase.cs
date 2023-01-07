@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Radzen;
 using System.Globalization;
 using uniformesV51.Data;
 using uniformesV51.Model;
@@ -18,20 +19,26 @@ namespace uniformesV51.Pages.Admin
         string ErrorMsn = "";
         protected override async Task OnInitializedAsync()
         {
-            await LeerUser();
+            await LeerElUser();
+        }
+        protected async Task Arranque()
+        {
             await LeerOrgsAll();
             await LeerUsersAll();
         }
         [Inject]
         public NavigationManager NM { get; set; } = default!;
-        [CascadingParameter]
-        public Task<AuthenticationState> AuthStateTask { get; set; } = default!;
         
         public Z110_Usuarios ElUser { get; set; } = new Z110_Usuarios();
         [Inject]
         public AuthenticationStateProvider GetAuthenticationStateAsync { get; set; } = default!;
-
-        public async Task<bool> LeerUser()
+        
+        public List<KeyValuePair<int, string>> LosNiveles { get; set; } =
+            new List<KeyValuePair<int, string>>();
+        
+        public List<KeyValuePair<int, string>> LosNivelesTitulos { get; set; } =
+            new List<KeyValuePair<int, string>>();
+        public async Task LeerElUser()
         {
             try
             {
@@ -46,13 +53,11 @@ namespace uniformesV51.Pages.Admin
                 var bitaTemp = MyFunc.MakeBitacora(ElUser!.UserId, ElUser!.OrgId,
                             "Bitacora, Se consulto listado de bitacora!", false);
                 await BitaRepo.Insert(bitaTemp);
-
-                return true;
+                await Arranque();
             }
             catch (Exception ex)
             {
                 var msg = ex.Message;
-                return false;
             }    
         }
         public List<Z110_Usuarios> LosUsersAll { get; set; } = new List<Z110_Usuarios>();
@@ -61,7 +66,7 @@ namespace uniformesV51.Pages.Admin
             ErrorMsn = "";
             try
             {
-                var resultado = await UserRepo.GetAll();
+                var resultado = await UserRepo.Get(x=>x.OrgId == ElUser.OrgId);
                 if (resultado != null)
                 {
                     LosUsersAll = resultado.ToList<Z110_Usuarios>();
@@ -76,18 +81,17 @@ namespace uniformesV51.Pages.Admin
                 ErrorMsn = ex.Message;
             }
         }
-
         public List<Z100_Org> LasOrgsAll { get; set; } = new List<Z100_Org>(); 
         public async Task LeerOrgsAll()
         {
             ErrorMsn = "";
             try
             {
-                var resultado = await OrgRepo.GetAll();
+                var resultado = await OrgRepo.Get(x => x.OrgId == ElUser.OrgId);
                 if (resultado != null)
                 {
                     LasOrgsAll = resultado.ToList<Z100_Org>();
-                    Console.WriteLine(LasOrgsAll.Count());
+                    
                 }
                 else
                 {
@@ -99,6 +103,60 @@ namespace uniformesV51.Pages.Admin
                 ErrorMsn = ex.Message;
                 LasOrgsAll = new();
             }
+        }
+        protected void LeerNiveles()
+        {
+            string[] NomNiveles = UserNivel.Titulos.Split(",");
+            // activa los niveles que puede ver y asignar el usuario
+            switch (ElUser.OldEmail)
+            {
+                case Constantes.UserNameMailPublico:
+                    LosNiveles.Add(new KeyValuePair<int, string>(1, NomNiveles[0].ToString()));
+                    break;
+
+                default:
+                    for (int i = 0; i < NomNiveles.Length; i++)
+                    {
+                        if (ElUser.Nivel > i)
+                            LosNiveles.Add(new KeyValuePair<int, string>
+                                (i + 1, NomNiveles[i]));
+                    }
+                    break;
+            }
+            // lee todos los niveles 
+            if (LosNivelesTitulos.Count < 1)
+            {
+                for (int i = 0; i < NomNiveles.Length; i++)
+                {
+                    LosNivelesTitulos.Add(new KeyValuePair<int, string>
+                        (i + 1, NomNiveles[i]));
+                }
+            }
+        }
+
+        public NotificationMessage ElMsn(string tipo, string titulo, 
+            string mensaje, int duracion)
+        {
+            NotificationMessage respuesta = new();
+            switch (tipo.ToLower())
+            {
+                case "info":
+                    respuesta.Severity = NotificationSeverity.Info;
+                    break;
+                case "error":
+                    respuesta.Severity = NotificationSeverity.Error;
+                    break;
+                case "warning":
+                    respuesta.Severity = NotificationSeverity.Warning;
+                    break;
+                default:
+                    respuesta.Severity = NotificationSeverity.Success;
+                    break;
+            }
+            respuesta.Summary = titulo;
+            respuesta.Detail = mensaje;
+            respuesta.Duration = 4000 + duracion;
+            return respuesta;
         }
         public Z190_Bitacora LastBita { get; set; } = new();
         

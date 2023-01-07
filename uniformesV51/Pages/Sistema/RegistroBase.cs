@@ -13,6 +13,7 @@ namespace uniformesV51.Pages.Sistema
         public Z110_Usuarios ElUser { get; set; } = new();
         [CascadingParameter(Name = "LasOrgsAll")]
         public List<Z100_Org> LasOrgs { get; set; } = new List<Z100_Org>();
+        [CascadingParameter(Name = "LosNivelesAll")]
         public List<KeyValuePair<int, string>> LosNiveles { get; set; } =
             new List<KeyValuePair<int, string>>();
         public AddUser NewAddUser { get; set; } = new();
@@ -31,12 +32,10 @@ namespace uniformesV51.Pages.Sistema
         {
             if (LasOrgs.Count() > 0 && LosNiveles.Count() < 1 && 
                 string.IsNullOrEmpty(NewAddUser.OrgId)) 
-                await Arranque();
-            
+                await Arranque();     
         }
         protected async Task Arranque()
         {
-            LeerNiveles();
             LlenarNewAddUser();
             var bitaTemp = MyFunc.MakeBitacora(ElUser.UserId, ElUser.OrgId, 
                 "Registro, Entro a registro de nuevos usuarios", false);
@@ -53,30 +52,15 @@ namespace uniformesV51.Pages.Sistema
                 NewAddUser.UsuarioOrgName = rs ?? "Sin Razon Social";
             }
         }
-        protected void LeerNiveles()
-        {
-            string[] NomNiveles = UserNivel.Titulos.Split(",");
-
-            switch (ElUser.OldEmail)
-            {
-                case Constantes.UserNameMailPublico:
-                    LosNiveles.Add(new KeyValuePair<int, string>(1, NomNiveles[0].ToString()));
-                    break;
-
-                default:
-                    for (int i = 0; i < NomNiveles.Length; i++)
-                    {
-                        if (ElUser.Nivel > i)
-                            LosNiveles.Add(new KeyValuePair<int, string>
-                                (i + 1, NomNiveles[i]));
-                    }
-                    break;
-            }
-        }
-        
+       
         public async Task SaveNewUsuario()
         {
             await AddUserRepo.InsertNew(NewAddUser);
+            NewAddUser = new();
+            LlenarNewAddUser();
+            var bitaTemp = MyFunc.MakeBitacora(ElUser.UserId, ElUser.OrgId,
+                $"Registro, Creo un nuevo usuario {NewAddUser.Mail}", false);
+            await BitacoraC.InvokeAsync(bitaTemp);
         }
         
         public MyFunc MyFunc { get; set; } = new MyFunc();

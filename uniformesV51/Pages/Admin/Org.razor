@@ -89,7 +89,7 @@
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="Z100_Org" Property="RazonSocial" Title="Razon Social" 
-                Filterable="true" Resizable="true" Width="460px" >
+                Filterable="true" Resizable="true" Width="350px" >
                     
                     <Template Context="datos">
                         @datos.RazonSocial
@@ -99,16 +99,16 @@
                         @if (datos.Rfc != null && datos.Rfc.Length == 12)
                         {
                                 <RadzenTextBox Name="RazonSocial" @bind-Value="datos.RazonSocial" 
-                        Placeholder="Nombre de la Empresa" Style="width: 80%" />
+                        Placeholder="Nombre de la Empresa" Style="width: 100%" />
                         }
                         else
                         {   
                                     <RadzenTextBox Name="Nombre" @bind-Value="datos.Nombre" 
-                                Placeholder="Nombre" Style="width: 30%"  />
+                                Placeholder="Nombre" Style="width: 35%"  />
 
                             <br />
                                     <RadzenTextBox Name="Paterno" @bind-Value="datos.Paterno" 
-                                Placeholder="Apellido Paterno" Style="width: 30%"  />
+                                Placeholder="Apellido Paterno" Style="width: 35%"  />
 
                             <br />
                                     <RadzenTextBox Name="Materno" @bind-Value="datos.Materno" 
@@ -200,7 +200,10 @@ else
         Editando = !Editando;
         await Servicio("Update", org);
 
-        string texto = $"Actualizo un registro {org.Rfc}";
+        
+        ShowNotification(ElMsn("info", "Actualizo",
+            $"Se actualizo la info de {org.Comercial}", 0));
+            string texto = $"Actualizo un registro {org.Rfc}";
         texto += $"{org.Comercial} {org.RazonSocial}";
         var bitaTemp = MyFunc.MakeBitacora(ElUser.UserId, ElUser.OrgId, texto, false);
         await BitacoraC.InvokeAsync(bitaTemp);
@@ -247,7 +250,9 @@ else
         var resultado = await Servicio("Insert",org);
         if (resultado)
         {
-            string texto = $"Creo una nueva organizacion {org.Rfc}";
+            ShowNotification(ElMsn("Ok", "Nueva",
+            $"Estamos creado un nueva ORGANIZACION!!! ", 0));
+            string texto = $"Organizaciones, Creo una nueva organizacion {org.Rfc}";
             texto += $"{org.Comercial} {org.RazonSocial}";
             var bitaTemp = MyFunc.MakeBitacora(ElUser.UserId, ElUser.OrgId, texto, false);
             await BitacoraC.InvokeAsync(bitaTemp);

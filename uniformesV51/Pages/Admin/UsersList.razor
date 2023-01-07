@@ -1,16 +1,15 @@
 ﻿
 
 @inherits UsersListBase
+@inject NotificationService NS
 @using uniformesV51.Model
 
 <div class="form-grup row">
     <div class="col-sm-9">
         <div class="nav-item px-3">
-            <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px"
-                          Text="Nueva Organizacion"
-                          Click="@InsertRow" Disabled="@Editando" />
+            
             <RadzenButton Icon="refresh" style="margin-bottom: 10px" ButtonStyle="ButtonStyle.Info"
-                          Click="@LeerOrgs" />
+                          Click="@LeerUsers" />
         </div>
     </div>
 
@@ -61,8 +60,69 @@
                 <RadzenDataGridColumn TItem="Z110_Usuarios" Title="Nivel" Filterable="false"
                                   Width="150px">
                     <Template Context="datos">
-                        @datos.Nivel
+                        @datos.OldEmail
                     </Template>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="Z110_Usuarios" Property="Nivel" Title="Nivel"
+                                  Filterable="false" Resizable="true" Width="180px">
+                    <Template Context="datos">
+                        @if(!string.IsNullOrEmpty(
+                            @LosNivelesTitulos.FirstOrDefault(x=>x.Key == datos.Nivel).Value))
+                        {
+                            <label>@LosNivelesTitulos.FirstOrDefault(x=>x.Key == datos.Nivel).Value</label>
+                        }
+                        else
+                        {
+                            <label>No tengo Info</label>
+                        }
+                    </Template>
+                    <EditTemplate Context="datos">
+                        <RadzenDropDown Name="Nivel" Data=@LosNiveles @bind-Value=@datos.Nivel
+                                    ValueProperty="Key" TextProperty="Value" AllowClear="true"
+                                    AllowFiltering="false" Style="width: 100%;" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="Z110_Usuarios" Context="sampleBlazorModelsSampleOrder"
+                                  Filterable="false" Sortable="false" TextAlign="TextAlign.Center"
+                                  Width="250px" Title="Estado">
+                    <Template Context="datos">
+                        @if (datos.Nivel >= ElUser.Nivel && datos.UserId != ElUser.UserId)
+                        {
+                            <label>.</label>
+                        }
+                        else
+                        {
+                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Secondary"
+                                  Class="m-1" Click="@((args) => EditRow(datos))" Visible="@(!Editando)" />
+
+                        }
+                        @if (datos.Status)
+                        {
+                            <b>Activo</b>
+                        }
+                        else
+                        {
+                            <b>Suspendido</b>
+                        }
+                    </Template>
+
+                    <EditTemplate Context="datos">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary"
+                                  Class="m-1" Click="@((args) => SaveRow(datos))" />
+
+                    @if (datos.Estado != 3)
+                    {
+                        <label>Borrar este registro? </label>
+                        <label>Si</label>
+                        <RadzenSwitch @bind-Value=@datos.Status Name="Status" />
+                        <label>No!</label>
+                    }
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1"
+                                  Click="@((args) => CancelEdit(datos))" />
+                    </EditTemplate>
+
                 </RadzenDataGridColumn>
 
 
@@ -77,5 +137,70 @@ else
 
 
 @code {
+    Z110_Usuarios UserToInser = new();
+
+    async Task EditRow(Z110_Usuarios user)
+    {
+        await UsersGrid!.EditRow(user);
+        Editando = !Editando;
+    }
+    async void OnUpdateRow(Z110_Usuarios user)
+    {
+        if (user == UserToInser) UserToInser = null!;
+
+        Editando = !Editando;
+        await Servicio("Update", user);
+
+        ShowNotification(ElMsn("info", "Actualizo",
+            $"Se actualizo la info de {user.OldEmail}", 0));
+        string nivel = LosNivelesTitulos.FirstOrDefault(x => x.Key == user.Nivel).Value;
+        string texto = $"Usuarios, Actualizo un registro {user.OldEmail}";
+        texto += $"{user.Nombre} {user.Paterno} {user.Materno} nivel {nivel} ";
+        var bitaTemp = MyFunc.MakeBitacora(ElUser.UserId, ElUser.OrgId, texto, false);
+        await BitacoraC.InvokeAsync(bitaTemp);
+    }
+
+    async Task SaveRow(Z110_Usuarios user)
+    {
+        await UsersGrid!.UpdateRow(user);
+    }
+    void CancelEdit(Z110_Usuarios user)
+    {
+        if (user == UserToInser) UserToInser = null!;
+        Editando = !Editando;
+        UsersGrid!.CancelEditRow(user);
+    }
+    async Task InsertRow()
+    {
+        UserToInser = new Z110_Usuarios();
+        UserToInser.OrgId = Guid.NewGuid().ToString();
+        UserToInser.Estado = 3;
+        Editando = !Editando;
+        await Task.Delay(1);
+        //await OrgGrid!.InsertRow(UserToInser);
+
+    }
+    async void OnCreateRow(Z110_Usuarios user)
+    {
+        if (user == UserToInser) UserToInser = null;
+        user.Estado = 2;
+        Editando = !Editando;
+
+        var resultado = await Servicio("Insert", user);
+        if (resultado)
+        {
+            ShowNotification(ElMsn("Ok", "Actualizo",
+            $"Se actualizo la info de {user.OldEmail}", 0));
+            string texto = $"Usuarios, Creo una nuevo usuario {user.OldEmail}";
+            texto += $"{user.Nombre} {user.Paterno}";
+            var bitaTemp = MyFunc.MakeBitacora(ElUser.UserId, ElUser.OrgId, texto, false);
+            await BitacoraC.InvokeAsync(bitaTemp);
+        }
+    }
+
+    public void ShowNotification(NotificationMessage message)
+    {
+        NS.Notify(message);
+    }
 
 }
